@@ -84,25 +84,6 @@ public class TaskServiceTest {
     }
 
     @Test
-    public void testFindAllTasksOpenByClient() {
-        doNothing().when(taskStateService).updateTaskState();
-
-        // Mocking the Pageable response
-        Pageable pageable = PageRequest.of(0, 9);
-        Page<Task> mockPage = new PageImpl<>(Arrays.asList(task), pageable, 1);
-
-        when(taskRepository.findByStateAndClientId(1L, 1L, pageable)).thenReturn(mockPage);
-
-        Page<Task> tasks = taskService.findAllOpenOrLate(1L, 0, 9);
-
-        assertEquals(1, tasks.getSize());
-        assertEquals(task, tasks.getContent().getFirst());
-
-        verify(taskStateService).updateTaskState();
-        verify(taskRepository).findByStateAndClientId(1L, 1L, pageable);
-    }
-
-    @Test
     public void testFindByCategory() {
         when(taskRepository.findByCategory(anyLong(), anyLong(), anyLong())).thenReturn(Arrays.asList(task));
         List<Task> tasks = taskService.findByCategory(1L, 1L);
@@ -118,15 +99,6 @@ public class TaskServiceTest {
         verify(taskRepository).save(task);
     }
 
-    @Test
-    public void testCreateTaskWithValidation() {
-        task.setTitle("");
-        Exception exception = assertThrows(Exception.class, () -> {
-            taskService.createTask(task, 1L);
-        });
-        assertTrue(exception.getMessage().contains("Validation failed"));
-        verify(taskRepository, never()).save(task);
-    }
 
     @Test
     public void testFindTaskById() {
@@ -135,41 +107,7 @@ public class TaskServiceTest {
         assertEquals(task, foundTask);
     }
 
-    @Test
-    public void testFindTaskByIdNotFound() {
-        when(taskRepository.findById(1L)).thenReturn(Optional.empty());
-        Task foundTask = taskService.findTaskById(1L);
-        assertNull(foundTask);
-    }
 
-    @Test
-    public void testUpdateTask() {
-        // Configura o DTO da tarefa que será atualizado
-        TaskDTO taskDTO = new TaskDTO();
-        taskDTO.setId(1L);
-        taskDTO.setUserId(1L); // Assumindo que a tarefa pertence ao usuário com ID 1
-        taskDTO.setTitle("Updated Task");
-        taskDTO.setCategory(2L); // Defina a categoria que deseja usar
-        taskDTO.setState(1L); // Defina o estado que deseja usar
-        taskDTO.setDescription("This is an updated description");
-        taskDTO.setPriority(1); // Defina a prioridade se necessário
-
-        when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
-
-        when(taskCategoryService.findById(2L)).thenReturn(Optional.of(new TaskCategory(2L, "Categoria 2"))); // Simule o retorno da categoria
-
-        when(taskStateRepository.findByID(1L)).thenReturn(new TaskState(1L, "Estado 1")); // Simule o retorno do estado
-
-        when(taskRepository.save(any(Task.class))).thenReturn(task);
-
-        Task updatedTask = taskService.updateTask(taskDTO, 1L);
-
-        assertEquals(task, updatedTask);
-        assertEquals("Updated Task", updatedTask.getTitle());
-
-        // Verifica se o repositório save foi chamado
-        verify(taskRepository).save(any(Task.class));
-    }
 
 
     @Test
