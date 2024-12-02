@@ -1,23 +1,21 @@
 package com.example.demo.controller;
+
 import com.example.demo.dto.TaskDTO;
 import com.example.demo.model.Task;
 import com.example.demo.service.TaskService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
 
 @RestController
 @RequestMapping("api/{userId}/task")
@@ -46,7 +44,6 @@ public class TaskController {
         return ResponseEntity.ok(tasksPage);
     }
 
-
     @GetMapping("/activebydate")
     public ResponseEntity<Map<String, Object>> getAllOpenOrLateTasksByDate(
             @PathVariable long userId,
@@ -73,7 +70,6 @@ public class TaskController {
         return getMapResponseEntity(tasksPage);
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id, @PathVariable Long userId) {
         if(taskService.findTaskById(id) == null) {
@@ -88,7 +84,6 @@ public class TaskController {
     public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO task, @PathVariable Long userId) {
         task.setUserId(userId);
         Task newtask = taskService.fromDTO(task);
-        System.out.println("data: "+ newtask.getDonedate());
         taskService.createTask(newtask, newtask.getState().getId());
         TaskDTO taskDTO = new TaskDTO(newtask);
         return ResponseEntity.ok().body(taskDTO);
@@ -102,7 +97,6 @@ public class TaskController {
         return ResponseEntity.ok().body(updatedTask);
     }
 
-
     @PutMapping("done/{id}")
     public ResponseEntity<TaskDTO> completedTask(@PathVariable Long id, @PathVariable Long userId) {
         if (taskService.findTaskById(id) == null) {
@@ -111,7 +105,7 @@ public class TaskController {
         Task task = taskService.getTaskById(id, userId);
         task.setState(taskService.CompletTask(2L));
         TaskDTO taskDTO = new TaskDTO(task);
-        Task newTask =  taskService.updateTask(taskDTO, userId);
+        Task newTask = taskService.updateTask(taskDTO, userId);
         return ResponseEntity.ok().body(new TaskDTO(newTask));
     }
 
@@ -131,5 +125,28 @@ public class TaskController {
         return ResponseEntity.ok().body(tasks);
     }
 
+    @PostMapping("/create")
+    public ResponseEntity<Task> createTaskFromText(
+            @RequestBody Map<String, Object> requestBody, @PathVariable Long userId) {
+        try {
+            // Pegando os valores do corpo da requisição
+            String inputPrompt = (String) requestBody.get("inputPrompt");
+            Long stateId = Long.valueOf(requestBody.get("stateId").toString());
 
+            // Verificando se os parâmetros foram passados corretamente
+            if (inputPrompt == null || inputPrompt.isEmpty()) {
+                return ResponseEntity.badRequest().body(null); // Retorna 400 Bad Request se os dados estiverem faltando
+            }
+
+            // Criando a tarefa a partir do texto
+            Task createdTask = taskService.createTaskFromText(inputPrompt, userId, stateId);
+
+            // Retorna a tarefa criada com sucesso
+            return ResponseEntity.ok(createdTask);
+        } catch (Exception e) {
+            // Captura qualquer exceção e retorna 500 - erro interno do servidor
+            return ResponseEntity.status(500).body(null);
+        }
+    }
 }
+
