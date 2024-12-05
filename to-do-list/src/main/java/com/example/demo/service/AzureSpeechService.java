@@ -29,7 +29,7 @@ public class AzureSpeechService {
 
     public String recognizeSpeechFromAudio(MultipartFile file, Long userID) throws Exception {
         // Criar arquivo temporário
-        File tempFile = File.createTempFile("audio", ".wav");
+        File tempFile = File.createTempFile("audio", ".mp3");
         try (InputStream inputStream = file.getInputStream();
              FileOutputStream outputStream = new FileOutputStream(tempFile)) {
             byte[] buffer = new byte[1024];
@@ -41,7 +41,7 @@ public class AzureSpeechService {
 
         // Configuração do SDK
         SpeechConfig speechConfig = SpeechConfig.fromSubscription(speechKey, region);
-        speechConfig.setSpeechRecognitionLanguage("en-US");
+        speechConfig.setSpeechRecognitionLanguage("pt-BR");
 
         String recognizedText;
 

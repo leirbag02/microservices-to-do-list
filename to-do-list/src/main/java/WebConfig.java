@@ -13,7 +13,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings( CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
+                        .allowedOrigins("https://flutter-repository-a-itodolist-zvks.vercel.app")
                         .allowedMethods("*")
                         .allowedHeaders("*");
             }
