@@ -2,7 +2,6 @@ package com.example.demo.Repository;
 
 
 import com.example.demo.model.Task;
-import com.example.demo.model.TaskState;
 import com.example.demo.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

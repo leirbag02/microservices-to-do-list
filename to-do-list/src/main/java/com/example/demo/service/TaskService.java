@@ -3,7 +3,6 @@ import com.example.demo.Repository.TaskRepository;
 import com.example.demo.Repository.TaskStateRepository;
 import com.example.demo.Repository.UserRepository;
 import com.example.demo.dto.TaskDTO;
-
 import com.example.demo.model.Task;
 import com.example.demo.model.TaskCategory;
 import com.example.demo.model.TaskState;
@@ -15,12 +14,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 @Service
-public class
-TaskService {
+public class TaskService {
 
     @Autowired
     TaskRepository taskRepository;
@@ -194,125 +195,40 @@ TaskService {
     }
 
 
-    public void createTaskFromText(String inputPrompt, Long userId) throws JsonProcessingException {
+    public Task createTaskFromText(String inputPrompt, Long userId, Long stateId) throws JsonProcessingException {
         System.out.println("Texto recebido para criar tarefa: " + inputPrompt);
 
         // Novo prompt que solicita uma resposta em JSON
         String fullPrompt = String.format(
-                "Analise o pedido abaixo e retorne somente o textContent como um objeto JSON estruturado. Identifique o tipo de ação (POST, UPDATE ou DELETE) e forneça os campos necessários para realizar a operação em uma tarefa. O JSON deve ter a seguinte estrutura:\n" +
+                "Retorne somente o textContent com base no seguinte pedido, crie um objeto JSON representando uma tarefa com os seguintes campos:\n" +
                         "{\n" +
-                        "  \"action\": \"<POST | UPDATE | DELETE>\",\n" +
-                        "  \"task\": {\n" +
-                        "    \"id\": <ID da tarefa ou null para POST>,\n" +
-                        "    \"userId\": <ID do usuário>,\n" +
-                        "    \"title\": \"<Título da Tarefa>\",\n" +
-                        "    \"description\": \"<Descrição da Tarefa>\",\n" +
-                        "    \"priority\": <Número entre 1 e 5 : quanto menor mais urgente>,\n" +
-                        "    \"categoryId\": <Número entre 1 e 8>,\n" +
-                        "    \"stateId\": <Numero entre 1 e 3, 1 : OPEN, 2 : LATE,  3 : CLOSED>,\n" +
-                        "    \"donedate\": \"<Formato  : 2024-10-15T14:30:00Z>\",\n" +
-                        "    \"createddate\": \"<Data de criação da tarefa ou null>\",\n" +
-                        "    \"updateddate\": \"<Data de atualização da tarefa ou null>\"\n" +
-                        "  }\n" +
+                        "  \"id\": null,\n" +
+                        "  \"userId\": <ID do usuário>,\n" +
+                        "  \"title\": \"<Título da Tarefa>\",\n" +
+                        "  \"description\": \"<Descrição da Tarefa>\",\n" +
+                        "  \"priority\": <Número entre 1 e 5>,\n" +
+                        "  \"categoryId\": <ID da categoria>,\n" +
+                        "  \"stateId\": <ID do estado da tarefa>,\n" +
+                        "  \"donedate\": \"<Data de conclusão da tarefa>\",\n" +
+                        "  \"createddate\": \"<Data de criação da tarefa>\",\n" +
+                        "  \"updateddate\": \"<Data de atualização da tarefa>\"\n" +
                         "}\n" +
-                        "Se o pedido não incluir dados suficientes tente interpretar o pedido e preencher da forma mais coveniente. Caso não seja possivel de maneira alguma   uma tarefa ou realizar a operação, informe claramente quais campos estão ausentes no JSON. Certifique-se de interpretar corretamente o pedido em linguagem natural.\n" +
                         "Pedido: %s", inputPrompt);
+
+
         String generatedText = null;
+
         // Gerar o texto com a OpenAI
+
         generatedText = String.valueOf(azureOpenAIService.generateTaskDetails(fullPrompt));
-        System.out.println(STR."Texto gerado pela OpenAI (completo): \{generatedText}");
-        processTaskAction(generatedText, userId);
-    }
+        System.out.println("Texto gerado pela OpenAI (completo): " + generatedText);
+        // Processar o texto gerado para converter em uma Task
+        Task newTask = parseJsonToTask(generatedText, userId, stateId);
+        Task savedTask = taskRepository.save(newTask);
+        System.out.println("Tarefa salva com sucesso: " + savedTask);
 
 
-
-    public void processTaskAction(String inputPrompt, Long userId) throws JsonProcessingException {
-        // Gera o JSON a partir do pedido
-        String fullPrompt = String.format(
-                "Analise o pedido abaixo e retorne somente o textContent como um objeto JSON estruturado. Identifique o tipo de ação ...",
-                inputPrompt
-        );
-
-        String responseJson = azureOpenAIService.generateTaskDetails(fullPrompt);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(responseJson);
-
-        String action = jsonNode.get("action").asText();
-
-        switch (action.toUpperCase()) {
-            case "POST":
-                handleCreateTask(jsonNode.get("task"), userId);
-                break;
-
-            case "UPDATE":
-                handleUpdateTask(jsonNode.get("task"), userId);
-                break;
-
-            case "DELETE":
-                handleDeleteTask(jsonNode.get("task"), userId);
-                break;
-
-            default:
-                throw new IllegalArgumentException("Ação inválida: " + action);
-        }
-    }
-
-    private void handleCreateTask(JsonNode taskNode, Long userId) throws JsonProcessingException {
-        // Converte os dados recebidos do JSON para uma entidade Task
-        Long stateId = taskNode.get("stateId").asLong();
-        Task newTask = parseJsonToTask(taskNode.toString(), userId, stateId);
-
-        // Salva a nova tarefa no banco
-        taskRepository.save(newTask);
-        System.out.println("Tarefa criada com sucesso: " + newTask);
-    }
-
-    private void handleUpdateTask(JsonNode taskNode, Long userId) {
-        String taskName = taskNode.get("title").asText();
-        List<Task> tasks = taskRepository.findTasksByNameLike(userId, taskName);
-
-        if (tasks.isEmpty()) {
-            throw new IllegalArgumentException("Nenhuma tarefa encontrada com o nome: " + taskName);
-        }
-
-        Task taskToUpdate = tasks.get(0); // Usando a primeira tarefa encontrada para atualizar
-
-        // Atualiza os campos da tarefa
-        if (taskNode.has("description")) {
-            taskToUpdate.setDescription(taskNode.get("description").asText());
-        }
-        if (taskNode.has("priority")) {
-            taskToUpdate.setPriority(taskNode.get("priority").asInt());
-        }
-        if (taskNode.has("donedate")) {
-            taskToUpdate.setDonedate(new Date(taskNode.get("donedate").asLong()));
-        }
-        if (taskNode.has("stateId")) {
-            Long stateId = taskNode.get("stateId").asLong();
-            TaskState newState = taskStateRepository.findById(stateId)
-                    .orElseThrow(() -> new IllegalArgumentException("Estado inválido: " + stateId));
-            taskToUpdate.setState(newState);
-        }
-
-        // Salva a tarefa atualizada no banco
-        taskRepository.save(taskToUpdate);
-        System.out.println(STR."Tarefa atualizada com sucesso: \{taskToUpdate}");
-    }
-
-    private void handleDeleteTask(JsonNode taskNode, Long userId) {
-        // Busca a tarefa pelo nome ou ID
-        String taskName = taskNode.get("title").asText();
-        List<Task> tasks = taskRepository.findTasksByNameLike(userId, taskName);
-
-        if (tasks.isEmpty()) {
-            throw new IllegalArgumentException(STR."Nenhuma tarefa encontrada com o nome: \{taskName}");
-        }
-
-        Task taskToDelete = tasks.getFirst(); // Usando a primeira tarefa encontrada para exclusão
-
-        taskRepository.delete(taskToDelete);
-        System.out.println(STR."Tarefa excluída com sucesso: \{taskToDelete.getTitle()}");
+        return savedTask;
     }
 
     private Task parseJsonToTask(String json, Long userId, Long stateId) throws JsonProcessingException {
@@ -337,17 +253,7 @@ TaskService {
                 new Date(jsonNode.get("updateddate").asLong()) : new Date();
 
         // Construção do objeto Task
-        // ID será gerado automaticamente ao salvar
-        // Busca o usuário pelo ID
-        // Título da tarefa
-        // Descrição da tarefa
-        // Prioridade (1 a 5)
-        // Estado da tarefa
-        // Categoria da tarefa
-        // Data de conclusão, se disponível
-        // Data de criação
-        // Data de atualização
-        return new Task(
+        Task task = new Task(
                 null, // ID será gerado automaticamente ao salvar
                 userRepository.findByID(userId), // Busca o usuário pelo ID
                 jsonNode.get("title").asText(), // Título da tarefa
@@ -356,12 +262,20 @@ TaskService {
                 taskState, // Estado da tarefa
                 taskCategory, // Categoria da tarefa
                 doneDate, // Data de conclusão, se disponível
-                new Date(), // Data de criação
-                new Date()  // Data de atualização
-                );
-}
+                createdDate, // Data de criação
+                updatedDate  // Data de atualização
+        );
+
+        return task;
+    }
+
 
 }
+
+
+
+
+
 
 
 

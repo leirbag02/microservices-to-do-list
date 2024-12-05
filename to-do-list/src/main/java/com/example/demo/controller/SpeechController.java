@@ -5,7 +5,6 @@ import com.example.demo.model.Task;
 import com.example.demo.model.User;
 import com.example.demo.service.AzureSpeechService;
 import com.example.demo.service.TaskService;
-import org.apache.logging.log4j.util.Timer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,13 +21,13 @@ public class SpeechController {
     private TaskService taskService;
 
     @PostMapping("/recognize")
-    public ResponseEntity<String> recognizeSpeech(@RequestParam("file") MultipartFile file,
-                                                        @PathVariable Long userId) {
+    public ResponseEntity<Task> recognizeSpeech(@RequestParam("file") MultipartFile file,
+                                                @PathVariable Long userId) {
         try {
             String recognizedText = azureSpeechService.recognizeSpeechFromAudio(file, userId);
             System.out.println("Texto reconhecido: " + recognizedText);
-            taskService.createTaskFromText(recognizedText, userId);
-            return ResponseEntity.ok().body(recognizedText);
+            Task createdTask = taskService.createTaskFromText(recognizedText, userId, 1L);
+            return ResponseEntity.ok(createdTask);
         } catch (Exception e) {
             return ResponseEntity.status(500).body(null);
         }
