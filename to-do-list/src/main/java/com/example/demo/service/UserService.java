@@ -1,6 +1,6 @@
 package com.example.demo.service;
 import com.example.demo.Excpetion.ObjectNotFound;
-import com.example.demo.Repository.UserRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.dto.TaskDTO;
 import com.example.demo.dto.UserDTO;
 import com.example.demo.dto.UserLoged;

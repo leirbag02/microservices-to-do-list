@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.Repository.TaskRepository;
-import com.example.demo.Repository.TaskStateRepository;
+import com.example.demo.repository.TaskRepository;
+import com.example.demo.repository.TaskStateRepository;
 import com.example.demo.model.Task;
 import com.example.demo.model.TaskState;
 import com.example.demo.model.TaskStatus;

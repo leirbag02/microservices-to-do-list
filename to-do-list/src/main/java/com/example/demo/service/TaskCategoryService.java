@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.Excpetion.ObjectNotFound;
-import com.example.demo.Repository.TaskCategoryRepository;
+import com.example.demo.repository.TaskCategoryRepository;
 import com.example.demo.model.TaskCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.Repository.AzureSpeechRepository;
-import com.example.demo.Repository.UserRepository;
+import com.example.demo.repository.AzureSpeechRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.model.AzureSpeech;
 import com.microsoft.cognitiveservices.speech.*;
 import com.microsoft.cognitiveservices.speech.audio.AudioConfig;

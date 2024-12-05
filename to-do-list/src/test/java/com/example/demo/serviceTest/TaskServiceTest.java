@@ -8,9 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.demo.Repository.TaskRepository;
-import com.example.demo.Repository.TaskStateRepository;
-import com.example.demo.Repository.UserRepository;
+import com.example.demo.repository.TaskRepository;
+import com.example.demo.repository.TaskStateRepository;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.model.Task;
 import com.example.demo.service.TaskCategoryService;
 import com.example.demo.service.TaskService;
