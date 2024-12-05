@@ -40,7 +40,7 @@ public class AzureSpeechService {
 
         // Configuração do SDK
         SpeechConfig speechConfig = SpeechConfig.fromSubscription(speechKey, region);
-        speechConfig.setSpeechRecognitionLanguage("en-US");
+        speechConfig.setSpeechRecognitionLanguage("pt-BR");
 
         String recognizedText;
 
