@@ -3,10 +3,8 @@ package com.example.demo.serviceTest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 
 import com.example.demo.Repository.TaskRepository;
 import com.example.demo.Repository.TaskStateRepository;
@@ -78,10 +76,10 @@ public class TaskServiceTest {
 
     @Test
     public void testFindByCategory() {
-        when(taskRepository.findByCategory(anyLong(), anyLong(), anyLong())).thenReturn(Arrays.asList(task));
+        when(taskRepository.findByCategory(anyLong(), anyLong(), anyLong())).thenReturn(Collections.singletonList(task));
         List<Task> tasks = taskService.findByCategory(1L, 1L);
         assertEquals(1, tasks.size());
-        assertEquals(task, tasks.get(0));
+        assertEquals(task, tasks.getFirst());
     }
 
     @Test

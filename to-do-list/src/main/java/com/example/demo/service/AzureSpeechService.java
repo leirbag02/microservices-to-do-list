@@ -28,7 +28,7 @@ public class AzureSpeechService {
 
     public String recognizeSpeechFromAudio(MultipartFile file, Long userID) throws Exception {
         // Criar arquivo temporário
-        File tempFile = File.createTempFile("audio", ".mp3");
+        File tempFile = File.createTempFile("audio", ".wav");
         try (InputStream inputStream = file.getInputStream();
              FileOutputStream outputStream = new FileOutputStream(tempFile)) {
             byte[] buffer = new byte[1024];
