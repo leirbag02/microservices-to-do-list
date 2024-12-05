@@ -16,17 +16,18 @@ jobs:
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
-          java-version: '21' # Ajustado para a versão correta
+          java-version: '21'
           distribution: 'microsoft'
 
       - name: Build with Maven
-        run: mvn clean install # Certifique-se de que o `pom.xml` está na raiz ou ajuste o caminho
+        run: mvn clean install
+        working-directory: to-do-list # Atualizado para apontar para o diretório correto
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: target/*.jar # Ajustado para combinar com o padrão do primeiro workflow
+          path: to-do-list/target/*.jar # Ajuste do caminho do JAR gerado
 
   deploy:
     runs-on: ubuntu-latest
@@ -56,6 +57,7 @@ jobs:
         with:
           app-name: 'AItodoList'
           slot-name: 'Production'
-          package: '*.jar' # Ajustado para ser consistente
+          package: 'to-do-list/target/*.jar' # Caminho correto do pacote para deploy
+
 
           
