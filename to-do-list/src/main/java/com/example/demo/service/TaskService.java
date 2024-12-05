@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+
 @Service
 public class TaskService {
 
@@ -66,9 +67,9 @@ public class TaskService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Long OpenState = 1L;
+        Long OpenState = (Long) 1L;
 
-        Long LateState = 3L;
+        Long LateState = (Long) 3L;
 
         return taskRepository.findByStateOpenOrLate(OpenState, LateState, userId, pageable);
     }
@@ -78,9 +79,9 @@ public class TaskService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Long OpenState = 1L;
+        Long OpenState = (Long) 1L;
 
-        Long LateState = 3L;
+        Long LateState = (Long) 3L;
 
         return taskRepository.findByStateOpenOrLate(OpenState, LateState, userId, pageable);
     }
@@ -92,7 +93,7 @@ public class TaskService {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Long closedStateId = 2L;
+        Long closedStateId = (Long) 2L;
 
         return taskRepository.findByStateAndClientId(closedStateId, user, pageable);
 
@@ -106,7 +107,7 @@ public class TaskService {
 
 
     public List<Task> findByCategory(Long id, Long clientID) {
-        return taskRepository.findByCategory(id, (long) 1, clientID);
+        return taskRepository.findByCategory(id, Long.valueOf(1L), clientID);
     }
 
 
@@ -137,7 +138,7 @@ public class TaskService {
 
     public Task fromDTO(TaskDTO taskDTO) {
         TaskState taskState = new TaskState();
-        taskState.setId(1L);
+        taskState.setId(Long.valueOf(1L));
         return new Task(
                 taskDTO.getId(),
                 userRepository.findByID(taskDTO.getUserId()),
@@ -247,7 +248,7 @@ public class TaskService {
     }
 
     private Task handleCreateTask(JsonNode taskNode, Long userId) throws JsonProcessingException {
-        Long stateId = taskNode.get("stateId").asLong();
+        Long stateId = (Long) taskNode.get("stateId").asLong();
         Task newTask = parseJsonToTask(taskNode.toString(), userId, stateId);
         System.out.println(STR."Tarefa criada com sucesso: \{newTask}");
         return taskRepository.save(newTask);
@@ -277,7 +278,7 @@ public class TaskService {
             existingTask.setDonedate(Date.from(Instant.parse(taskNode.get("donedate").asText())));
         }
         if (taskNode.has("stateId") && !Objects.equals(taskNode.get("stateId").asText(), "null")) {
-            TaskState newState = taskStateRepository.findById(taskNode.get("stateId").asLong())
+            TaskState newState = taskStateRepository.findById(Long.valueOf(taskNode.get("stateId").asLong()))
                     .orElseThrow(() -> new IllegalArgumentException("Estado inválido."));
             existingTask.setState(newState);
         }
@@ -300,7 +301,7 @@ public class TaskService {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(json);
         TaskState taskState = taskStateRepository.findByID(stateId);
-        TaskCategory taskCategory = taskCategoryService.repository.findByID(jsonNode.get("categoryId").asLong());
+        TaskCategory taskCategory = taskCategoryService.repository.findByID(Long.valueOf(jsonNode.get("categoryId").asLong()));
 
         return new Task(
                 null,
