@@ -18,14 +18,13 @@ public class CustomHeaderFilter implements Filter {
             throws IOException, ServletException {
 
         // Adicionando cabeçalhos à resposta
-        if (response instanceof HttpServletResponse) {
-            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        if (response instanceof HttpServletResponse httpServletResponse) {
 
             // Configurações de CORS
             httpServletResponse.setHeader("Access-Control-Allow-Origin", "*"); // Permitir todas as origens
             httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
             httpServletResponse.setHeader("Access-Control-Allow-Headers", "*");
-            httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true"); // Permitir envio de cookies, se necessário
+            httpServletResponse.setHeader("Access-Control-Allow-Credentials", "false"); // Permitir envio de cookies, se necessário
             httpServletResponse.setHeader("Access-Control-Max-Age", "3600"); // Cache do navegador (3600 segundos)
         }
 
