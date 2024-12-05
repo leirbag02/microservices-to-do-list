@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.Repository.AzureSpeechRepository;
 import com.example.demo.Repository.UserRepository;
 import com.example.demo.model.AzureSpeech;
-import com.example.demo.model.User;
 import com.microsoft.cognitiveservices.speech.*;
 import com.microsoft.cognitiveservices.speech.audio.AudioConfig;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -11,10 +11,7 @@ import java.util.Optional;
 import com.example.demo.Repository.TaskRepository;
 import com.example.demo.Repository.TaskStateRepository;
 import com.example.demo.Repository.UserRepository;
-import com.example.demo.dto.TaskDTO;
 import com.example.demo.model.Task;
-import com.example.demo.model.TaskCategory;
-import com.example.demo.model.TaskState;
 import com.example.demo.service.TaskCategoryService;
 import com.example.demo.service.TaskService;
 import com.example.demo.service.TaskStateService;
@@ -23,10 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 public class TaskServiceTest {
 
