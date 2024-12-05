@@ -20,7 +20,7 @@ COPY to-do-list/. .
 RUN mvn clean install
 
 # Stage 2: Run
-FROM openjdk:21-jdk-slim
+FROM openjdk:22-jdk-slim
 
 # Expondo a porta 8080
 EXPOSE 8080
