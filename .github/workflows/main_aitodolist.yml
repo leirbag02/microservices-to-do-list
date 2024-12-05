@@ -60,8 +60,7 @@ jobs:
         with:
           app-name: 'AItodoList'
           slot-name: 'Production'
-          package: 'to-do-list/target/**/*.jar'  # Usando wildcard para garantir o deploy do arquivo JAR correto
-
+          package: '*.jar'  # Esse caminho é relativo ao diretório de trabalho atual
 
 
           
