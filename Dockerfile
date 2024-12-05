@@ -2,7 +2,7 @@
 FROM ubuntu:latest AS build
 
 # Atualiza o sistema e instala o OpenJDK 21 e Maven
-RUN apt-get update && apt-get install -y openjdk-21-jdk maven
+RUN apt-get update && apt-get install -y openjdk-22-jdk maven
 
 # Define o diretório de trabalho como o diretório raiz do projeto
 WORKDIR /app
