@@ -58,6 +58,4 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findTasksByNameLike(@Param("userId") Long userId, @Param("taskName") String taskName);
 
 
-
-
 }
