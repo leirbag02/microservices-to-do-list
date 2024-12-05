@@ -198,7 +198,7 @@ TaskService {
     }
 
 
-    public Task createTaskFromText(String inputPrompt, Long userId) throws JsonProcessingException {
+    public Task createTaskFromText(String inputPrompt, Long userId, long l) throws JsonProcessingException {
         System.out.println(STR."Texto recebido para criar tarefa: \{inputPrompt}");
 
         // Monta o prompt para o modelo AI

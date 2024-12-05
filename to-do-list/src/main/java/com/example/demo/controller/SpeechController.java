@@ -25,7 +25,7 @@ public class SpeechController {
                                                 @PathVariable Long userId) {
         try {
             String recognizedText = azureSpeechService.recognizeSpeechFromAudio(file, userId);
-            System.out.println("Texto reconhecido: " + recognizedText);
+            System.out.println(STR."Texto reconhecido: \{recognizedText}");
             Task createdTask = taskService.createTaskFromText(recognizedText, userId, 1L);
             return ResponseEntity.ok(createdTask);
         } catch (Exception e) {
