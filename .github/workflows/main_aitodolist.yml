@@ -21,13 +21,16 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean install
-        working-directory: to-do-list # Atualizado para apontar para o diretório correto
+        working-directory: to-do-list  # Atualizado para apontar para o diretório correto
+
+      - name: List files in target directory
+        run: ls to-do-list/target/  # Verifica se o JAR foi gerado corretamente
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: to-do-list/target/*.jar # Ajuste do caminho do JAR gerado
+          path: to-do-list/target/demo-0.0.1-SNAPSHOT.jar  # Caminho atualizado para o nome correto do JAR
 
   deploy:
     runs-on: ubuntu-latest
@@ -57,7 +60,7 @@ jobs:
         with:
           app-name: 'AItodoList'
           slot-name: 'Production'
-          package: 'to-do-list/target/*.jar' # Caminho correto do pacote para deploy
+          package: 'to-do-list/target/demo-0.0.1-SNAPSHOT.jar'  # Caminho atualizado para o nome correto do JAR
 
 
           
