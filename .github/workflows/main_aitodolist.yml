@@ -24,13 +24,13 @@ jobs:
         working-directory: to-do-list  # Atualizado para apontar para o diretório correto
 
       - name: List files in target directory
-        run: ls to-do-list/target/  # Verifica se o JAR foi gerado corretamente
+        run: ls -l to-do-list/target/  # Listar arquivos com detalhes para confirmar o arquivo JAR gerado
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: to-do-list/target/demo-0.0.1-SNAPSHOT.jar  # Caminho atualizado para o nome correto do JAR
+          path: to-do-list/target/**/*.jar  # Usando wildcard para garantir que qualquer JAR gerado seja capturado
 
   deploy:
     runs-on: ubuntu-latest
@@ -60,7 +60,8 @@ jobs:
         with:
           app-name: 'AItodoList'
           slot-name: 'Production'
-          package: 'to-do-list/target/demo-0.0.1-SNAPSHOT.jar'  # Caminho atualizado para o nome correto do JAR
+          package: 'to-do-list/target/**/*.jar'  # Usando wildcard para garantir o deploy do arquivo JAR correto
+
 
 
           
