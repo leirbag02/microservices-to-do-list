@@ -8,15 +8,18 @@
         <version>3.3.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>org.example</groupId>
     <artifactId>demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>demo</name>
     <description>demo</description>
+
     <properties>
         <java.version>21</java.version>
         <spring-ai.version>1.0.0-M4</spring-ai.version>
     </properties>
+
     <dependencies>
         <!-- Spring Boot Starter for Data JPA -->
         <dependency>
@@ -35,11 +38,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
-
 
         <!-- Azure AI OpenAI SDK -->
         <dependency>
@@ -146,6 +149,8 @@
                     <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
+
+            <!-- Maven Surefire Plugin for Running Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -154,8 +159,8 @@
                     <argLine>--enable-preview</argLine>
                 </configuration>
             </plugin>
-
         </plugins>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -177,11 +182,9 @@
             </snapshots>
         </repository>
 
-        <!-- Default Maven Central Repository -->
         <repository>
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
 </project>
-

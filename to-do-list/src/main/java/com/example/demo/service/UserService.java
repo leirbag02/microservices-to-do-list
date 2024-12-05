@@ -22,7 +22,7 @@ public class UserService {
         updateData(obj, user);
         userRepository.save(user);
     }
-
+//
     public void save(User user) {
         userRepository.save(user);
     }
