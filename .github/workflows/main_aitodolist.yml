@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy JAR app to Azure Web App - AItodoList
 
 on:
@@ -14,22 +11,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout do repositório
       - uses: actions/checkout@v4
 
+      # Configuração da versão do Java
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'microsoft'
 
+      # Build com Maven
       - name: Build with Maven
+        working-directory: to-do-list # Diretório ajustado
         run: mvn clean install
 
+      # Upload do artefato gerado
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: 'to-do-list/target/*.jar' # Ajuste no caminho do artefato
 
   deploy:
     runs-on: ubuntu-latest
@@ -38,21 +40,24 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-  
+      id-token: write # Necessário para solicitação do JWT
+
     steps:
+      # Baixar o artefato gerado na etapa de build
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: java-app
-      
+
+      # Login no Azure
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_7041D4D591A04E61AB9DFDD4D8C02C51 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_70707DB356394FFABE0ECEF94B3FF2AB }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5AB22CF12DC342CFA3FA098AF9559A4E }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
 
+      # Deploy para Azure Web App
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -60,4 +65,5 @@ jobs:
           app-name: 'AItodoList'
           slot-name: 'Production'
           package: '*.jar'
+
           
